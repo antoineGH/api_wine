@@ -142,10 +142,5 @@ def get_wine(wine_id):
         return jsonify({'message': 'Wine doesn\'t exist'}), 404
     return jsonify(wine.serialize)
    
-# TODO: ROUTE SINGLE PRODUCT
-# TODO: UPDATE DOCUMENTATION WITH NEW ROUTES
-# TODO: UPDATE ERD IN DOCUMENATION
-
-
 if __name__ == '__main__':
     app.run(debug=True)
