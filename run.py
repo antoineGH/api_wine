@@ -118,8 +118,6 @@ class Image(db.Model):
     def __repr__(self):
         return "image_id: {}, wine_id: {}, url: {}".format(self.image_id, self.wine_id, self.url)
 
-# --- INFO: FUNCTIONS ---
-
 # --- INFO: ROUTES ---
 
 @app.route('/')
