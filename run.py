@@ -92,7 +92,6 @@ class Wines(db.Model):
         vineyard_code = Vineyards.query.get(self.vineyard_code).vineyard_name
         village_code = Villages.query.get(self.village_code).village_name
         year_number = Years.query.get(self.year_number).year_number
-        # image = Image.query.get(self.wine_id).url
         images = Image.query.filter_by(wine_id=self.wine_id).all()
         print(images)
 
