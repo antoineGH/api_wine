@@ -135,5 +135,10 @@ def get_products():
     return jsonify([wine.serialize for wine in wines])
 
 
+# TODO: ROUTE SINGLE PRODUCT
+# TODO: UPDATE DOCUMENTATION WITH NEW ROUTES
+# TODO: UPDATE ERD IN DOCUMENATION
+
+
 if __name__ == '__main__':
     app.run(debug=True)
