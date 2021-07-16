@@ -127,11 +127,21 @@ def home():
     return render_template('documentation.html', title='Documentation')
 
 @app.route('/api/wines', methods=['GET'])
-def get_products():
+def get_wines():
     wines = Wines.query.all()
+    if not wines:
+        return jsonify({'message': 'No wine in database'}), 404
     return jsonify([wine.serialize for wine in wines])
 
-
+@app.route('/api/wine/<wine_id>', methods=['GET'])
+def get_wine(wine_id):
+    if not wine_id:
+        return jsonify({'message': 'Wine ID missing'}), 404
+    wine = Wines.query.get(wine_id)
+    if not wine:
+        return jsonify({'message': 'Wine doesn\'t exist'}), 404
+    return jsonify(wine.serialize)
+   
 # TODO: ROUTE SINGLE PRODUCT
 # TODO: UPDATE DOCUMENTATION WITH NEW ROUTES
 # TODO: UPDATE ERD IN DOCUMENATION
