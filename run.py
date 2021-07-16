@@ -85,14 +85,16 @@ class Wines(db.Model):
 
     @property
     def serialize(self):
-        color_code = Colors.query.get(self.color_code).color_code
-        country_code = Countries.query.get(self.country_code).country_code
-        region_code = Regions.query.get(self.region_code).region_code
-        variety_code = Varieties.query.get(self.variety_code).variety_code
-        vineyard_code = Vineyards.query.get(self.vineyard_code).vineyard_code
-        village_code = Villages.query.get(self.village_code).village_code
+        color_code = Colors.query.get(self.color_code).color_name
+        country_code = Countries.query.get(self.country_code).country_name
+        region_code = Regions.query.get(self.region_code).region_name
+        variety_code = Varieties.query.get(self.variety_code).variety_name
+        vineyard_code = Vineyards.query.get(self.vineyard_code).vineyard_name
+        village_code = Villages.query.get(self.village_code).village_name
         year_number = Years.query.get(self.year_number).year_number
-        image = Image.query.get(self.wine_id).url
+        # image = Image.query.get(self.wine_id).url
+        images = Image.query.filter_by(wine_id=self.wine_id).all()
+        print(images)
 
         
         return {
@@ -108,7 +110,7 @@ class Wines(db.Model):
             'vineyard_name': vineyard_code,
             'village_name': village_code,
             'year_number': year_number,
-            'images': image,
+            'images': [image.url for image in images],
         }
 
 class Image(db.Model):
@@ -119,8 +121,6 @@ class Image(db.Model):
     def __repr__(self):
         return "image_id: {}, wine_id: {}, url: {}".format(self.image_id, self.wine_id, self.url)
 
-   
-
 # --- INFO: FUNCTIONS ---
 
 # --- INFO: ROUTES ---
@@ -128,6 +128,12 @@ class Image(db.Model):
 @app.route('/')
 def home():
     return render_template('documentation.html', title='Documentation')
+
+@app.route('/api/wines', methods=['GET'])
+def get_products():
+    wines = Wines.query.all()
+    return jsonify([wine.serialize for wine in wines])
+
 
 if __name__ == '__main__':
     app.run(debug=True)
