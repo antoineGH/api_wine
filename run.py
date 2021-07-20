@@ -124,12 +124,70 @@ class Image(db.Model):
 def home():
     return render_template('documentation.html', title='Documentation')
 
-@app.route('/api/wines', methods=['GET'])
+@app.route('/api/wines', methods=['GET', 'POST'])
 def get_wines():
-    wines = Wines.query.all()
-    if not wines:
-        return jsonify({'message': 'No wine in database'}), 404
-    return jsonify([wine.serialize for wine in wines])
+    if request.method == "GET":
+        wines = Wines.query.all()
+        if not wines:
+            return jsonify({'message': 'No wine in database'}), 404
+        return jsonify([wine.serialize for wine in wines])
+    
+    if request.method == "POST":
+        if not request.is_json:
+            return jsonify({"message": "Missing JSON in request"}), 400
+
+        content = request.get_json(force=True)
+        wine_name = content.get('wine_name', None)
+        wine_description = content.get('wine_description', None)
+        origin = content.get('origin', None)
+        price = content.get('price', None)
+        color_code = content.get('color_code', None)
+        country_code = content.get('country_code', None)
+        region_code = content.get('region_code', None)
+        variety_code = content.get('variety_code', None)
+        vineyard_code = content.get('vineyard_code', None)
+        village_code = content.get('village_code', None)
+        year_number = content.get('year_number', None)
+
+        if not wine_name:
+            return jsonify({"message": "Missing wine_name"}), 400
+
+        if not wine_description:
+            return jsonify({"message": "Missing wine_description"}), 400
+
+        if not origin:
+            return jsonify({"message": "Missing origin"}), 400
+
+        if not price:
+            return jsonify({"message": "Missing price"}), 400
+
+        if not color_code:
+            return jsonify({"message", "Missing color_code"}), 400
+
+        if not country_code:
+            return jsonify({"message": "Missing country_code"}), 400
+        
+        if not region_code:
+            return jsonify({"message": "Missing region_code"}), 400
+
+        if not variety_code:
+            return jsonify({"message": "Missing variety_code"}), 400
+
+        if not vineyard_code:
+            return jsonify({"message": "Missing vineyard_code"}), 400
+
+        if not village_code:
+            return jsonify({"message": "Missing village_code"}), 400
+
+        if not year_number:
+            return jsonify({"message": "Missing year_number"}), 400
+
+        # userdetail = UserDetails(address=address, city=city, state=state, postcode=postcode, country=country, phone=phone, user_id=user.user_id)
+
+        wine = Wines(wine_name=wine_name, wine_description=wine_description, origin=origin, price=price, color_code=color_code, country_code=country_code, region_code=region_code, variety_code=variety_code, vineyard_code=vineyard_code, village_code=village_code, year_number=year_number)
+        db.session.add(wine)
+        db.session.commit()
+        return jsonify(wine.serialize)
 
 @app.route('/api/wine/<wine_id>', methods=['GET'])
 def get_wine(wine_id):
@@ -139,6 +197,8 @@ def get_wine(wine_id):
     if not wine:
         return jsonify({'message': 'Wine doesn\'t exist'}), 404
     return jsonify(wine.serialize)
-   
+
+
+
 if __name__ == '__main__':
     app.run(debug=True)
