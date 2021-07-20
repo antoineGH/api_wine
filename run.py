@@ -179,12 +179,30 @@ class Image(db.Model):
 def home():
     return render_template('documentation.html', title='Documentation')
 
-@app.route('/api/vineyards', methods=['GET'])
+# --- INFO: ROUTES VINEYARDS ---
+
+@app.route('/api/vineyards', methods=['GET', 'POST'])
 def get_vineyards():
-    vineyards = Vineyards.query.all()
-    if not vineyards:
-        return jsonify({"message", "No vineyard in database"}), 404
-    return jsonify([vineyard.serialize for vineyard in vineyards])
+    if request.method == "GET":
+        vineyards = Vineyards.query.all()
+        if not vineyards:
+            return jsonify({"message", "No vineyard in database"}), 404
+        return jsonify([vineyard.serialize for vineyard in vineyards])
+
+    if request.method == "POST":
+        if not request.is_json:
+            return jsonify({"message": "Missing JSON in request"}), 400
+
+        content = request.get_json(force=True)
+        vineyard_name = content.get('vineyard_name', None)
+
+        if not vineyard_name:
+                return jsonify({"message": "Missing vineyard_name"}), 400
+
+        vineyard = Vineyards(vineyard_name=vineyard_name)
+        db.session.add(vineyard)
+        db.session.commit()
+        return jsonify(vineyard.serialize)
 
 @app.route('/api/vineyard/<vineyard_id>', methods=['GET'])
 def get_vineyard(vineyard_id):
@@ -194,12 +212,30 @@ def get_vineyard(vineyard_id):
     if not vineyard:
         return jsonify({"message": "Vineyard doesn\'t exist"}), 404
 
-@app.route('/api/varieties', methods=['GET'])
+# --- INFO: ROUTES VARIETIES ---
+
+@app.route('/api/varieties', methods=['GET', 'POST'])
 def get_varieties():
-    varieties = Varieties.query.all()
-    if not varieties:
-        return jsonify({"message": "No variety in database"})
-    return jsonify([variety.serialize for variety in varieties])
+    if request.method == "GET":
+        varieties = Varieties.query.all()
+        if not varieties:
+            return jsonify({"message": "No variety in database"})
+        return jsonify([variety.serialize for variety in varieties])
+        
+    if request.method == "POST":
+        if not request.is_json:
+            return jsonify({"message": "Missing JSON in request"}), 400
+
+        content = request.get_json(force=True)
+        variety_name = content.get('variety_name', None)
+
+        if not variety_name:
+                return jsonify({"message": "Missing variety_name"}), 400
+
+        variety = Varieties(variety_name=variety_name)
+        db.session.add(variety)
+        db.session.commit()
+        return jsonify(variety.serialize)
 
 @app.route('/api/variety/<variety_id>', methods=['GET'])
 def get_variety(variety_id):
@@ -210,12 +246,31 @@ def get_variety(variety_id):
         return jsonify({"message": "Variety doesn\'t exist"}), 404
     return jsonify(variety.serialize)
 
-@app.route('/api/years', methods=['GET'])
+# --- INFO: ROUTES YEARS ---
+
+@app.route('/api/years', methods=['GET', 'POST'])
 def get_years():
-    years = Years.query.all()
-    if not years:
-        return jsonify({"message": "No year in database"}), 404
-    return jsonify([year.serialize for year in years])
+    if request.method == "GET":
+        years = Years.query.all()
+        if not years:
+            return jsonify({"message": "No year in database"}), 404
+        return jsonify([year.serialize for year in years])
+
+    if request.method == "POST":
+            if not request.is_json:
+                return jsonify({"message": "Missing JSON in request"}), 400
+
+            content = request.get_json(force=True)
+            year_number = content.get('year_number', None)
+
+            if not year_number:
+                    return jsonify({"message": "Missing year_number"}), 400
+
+
+            year = Years(year_number=year_number)
+            db.session.add(year)
+            db.session.commit()
+            return jsonify(year.serialize)
 
 @app.route('/api/year/<year_number>', methods=['GET'])
 def get_year(year_number):
@@ -226,12 +281,30 @@ def get_year(year_number):
         return jsonify({"message": "Year doesn\'t exist"}), 404
     return jsonify(year.serialize)
 
-@app.route('/api/villages', methods=['GET'])
+# --- INFO: ROUTES VILLAGES ---
+
+@app.route('/api/villages', methods=['GET', 'POST'])
 def get_villages():
-    villages = Villages.query.all()
-    if not villages:
-        return jsonify({"message": "No village in database"}), 404
-    return jsonify([village.serialize for village in villages])
+    if request.method == "GET":
+        villages = Villages.query.all()
+        if not villages:
+            return jsonify({"message": "No village in database"}), 404
+        return jsonify([village.serialize for village in villages])
+
+    if request.method == "POST":
+        if not request.is_json:
+            return jsonify({"message": "Missing JSON in request"}), 400
+
+        content = request.get_json(force=True)
+        village_name = content.get('village_name', None)
+
+        if not village_name:
+                return jsonify({"message": "Missing village_name"}), 400
+
+        village = Villages(village_name=village_name)
+        db.session.add(village)
+        db.session.commit()
+        return jsonify(village.serialize)
 
 @app.route('/api/village/<village_id>', methods=['GET'])
 def get_village(village_id):
@@ -242,12 +315,30 @@ def get_village(village_id):
         return jsonify({"message": "No village in database"})
     return jsonify(village.serialize)
 
-@app.route('/api/regions', methods=['GET'])
+# --- INFO: ROUTES REGIONS ---
+
+@app.route('/api/regions', methods=['GET', 'POST'])
 def get_regions():
-    regions = Regions.query.all()
-    if not regions:
-        return jsonify({"message": "No region in database"}), 404
-    return jsonify([region.serialize for region in regions])
+    if request.method == "GET":
+        regions = Regions.query.all()
+        if not regions:
+            return jsonify({"message": "No region in database"}), 404
+        return jsonify([region.serialize for region in regions])
+
+    if request.method == "POST":
+        if not request.is_json:
+            return jsonify({"message": "Missing JSON in request"}), 400
+
+    content = request.get_json(force=True)
+    region_name = content.get('region_name', None)
+
+    if not region_name:
+            return jsonify({"message": "Missing region_name"}), 400
+
+    region = Regions(region_name=region_name)
+    db.session.add(region)
+    db.session.commit()
+    return jsonify(region.serialize)
 
 @app.route('/api/region/<region_id>', methods=['GET'])
 def get_region(region_id):
@@ -258,12 +349,30 @@ def get_region(region_id):
         return jsonify({"message": "Region doesn\'t exist"}), 404   
     return jsonify(region.serialize)
 
-@app.route('/api/countries', methods=['GET'])
+# --- INFO: ROUTES COUNTRIES ---
+
+@app.route('/api/countries', methods=['GET', 'POST'])
 def get_countries():
+    if request.method == "GET":
         countries = Countries.query.all()
         if not countries:
             return jsonify({"message": "No country in database"}), 404
         return jsonify([country.serialize for country in countries])
+
+    if request.method == "POST":
+        if not request.is_json:
+            return jsonify({"message": "Missing JSON in request"}), 400
+
+    content = request.get_json(force=True)
+    country_name = content.get('country_name', None)
+
+    if not country_name:
+            return jsonify({"message": "Missing country_name"}), 400
+
+    country = Countries(country_name=country_name)
+    db.session.add(country)
+    db.session.commit()
+    return jsonify(country.serialize)
 
 @app.route('/api/country/<country_id>', methods=['GET'])
 def get_country(country_id):
@@ -274,12 +383,30 @@ def get_country(country_id):
         return jsonify({"message": "Country doesn\'t exist"}), 404
     return jsonify(country.serialize)
 
-@app.route('/api/colors', methods=['GET'])
+# --- INFO: ROUTES COLORS ---
+
+@app.route('/api/colors', methods=['GET', 'POST'])
 def get_colors():
-    colors = Colors.query.all()
-    if not colors:
-        return jsonify({"message": 'No color in database'}), 404
-    return jsonify([color.serialize for color in colors])
+    if request.method == "GET":
+        colors = Colors.query.all()
+        if not colors:
+            return jsonify({"message": 'No color in database'}), 404
+        return jsonify([color.serialize for color in colors])
+
+    if request.method == "POST":
+        if not request.is_json:
+            return jsonify({"message": "Missing JSON in request"}), 400
+
+    content = request.get_json(force=True)
+    color_name = content.get('color_name', None)
+
+    if not color_name:
+            return jsonify({"message": "Missing color_name"}), 400
+
+    color = Colors(color_name=color_name)
+    db.session.add(color)
+    db.session.commit()
+    return jsonify(color.serialize)
 
 @app.route('/api/color/<color_id>', methods=['GET'])
 def get_color(color_id):
@@ -289,6 +416,8 @@ def get_color(color_id):
     if not color:
         return jsonify({'message': 'Color doesn\'t exist'}), 404
     return jsonify(color.serialize)
+
+# --- INFO: ROUTES WINES ---
 
 @app.route('/api/wines', methods=['GET', 'POST'])
 def get_wines():
