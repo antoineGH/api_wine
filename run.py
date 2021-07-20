@@ -179,6 +179,21 @@ class Image(db.Model):
 def home():
     return render_template('documentation.html', title='Documentation')
 
+@app.route('/api/vineyards', methods=['GET'])
+def get_vineyards():
+    vineyards = Vineyards.query.all()
+    if not vineyards:
+        return jsonify({"message", "No vineyard in database"}), 404
+    return jsonify([vineyard.serialize for vineyard in vineyards])
+
+@app.route('/api/vineyard/<vineyard_id>', methods=['GET'])
+def get_vineyard(vineyard_id):
+    if not vineyard_id:
+        return jsonify({"message": "Vineyard ID missing"}), 404
+    vineyard = Vineyards.query.get(vineyard_id)
+    if not vineyard:
+        return jsonify({"message": "Vineyard doesn\'t exist"}), 404
+
 @app.route('/api/varieties', methods=['GET'])
 def get_varieties():
     varieties = Varieties.query.all()
@@ -194,7 +209,6 @@ def get_variety(variety_id):
     if not variety:
         return jsonify({"message": "Variety doesn\'t exist"}), 404
     return jsonify(variety.serialize)
-
 
 @app.route('/api/years', methods=['GET'])
 def get_years():
