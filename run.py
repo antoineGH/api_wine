@@ -24,12 +24,28 @@ class Colors(db.Model):
     def __repr__(self):
             return "color_code: {}, color_name: {}".format(self.color_code, self.color_name)
 
+    @property
+    def serialize(self):
+        
+        return {
+            'color_code': self.color_code,
+            'color_name': self.color_name,
+        }
+
 class Countries(db.Model):
     country_code = Column(Integer, primary_key=True)
     country_name = Column(String(100), nullable=False)
 
     def __repr__(self):
             return "country_code: {}, country_name: {}".format(self.country_code, self.country_name)
+
+    @property
+    def serialize(self):
+        
+        return {
+            'country_code': self.country_code,
+            'country_name': self.country_name,
+        }
 
 class Regions(db.Model):
     region_code = Column(Integer, primary_key=True)
@@ -38,12 +54,28 @@ class Regions(db.Model):
     def __repr__(self):
             return "region_code: {}, region_name: {}".format(self.region_code, self.region_name)
 
+    @property
+    def serialize(self):
+        
+        return {
+            'region_code': self.region_code,
+            'region_name': self.region_name,
+        }
+
 class Varieties(db.Model):
     variety_code = Column(Integer, primary_key=True)
     variety_name = Column(String(100), nullable=False)
 
     def __repr__(self):
             return "variety_code: {}, variety_name: {}".format(self.variety_code, self.variety_name)
+
+    @property
+    def serialize(self):
+        
+        return {
+            'variety_code': self.variety_code,
+            'variety_name': self.variety_name,
+        }
 
 class Vineyards(db.Model):
     vineyard_code = Column(Integer, primary_key=True)
@@ -52,6 +84,14 @@ class Vineyards(db.Model):
     def __repr__(self):
             return "vineyard_code: {}, vineyard_name: {}".format(self.vineyard_code, self.vineyard_name)
 
+    @property
+    def serialize(self):
+        
+        return {
+            'vineyard_code': self.vineyard_code,
+            'vineyard_name': self.vineyard_name,
+        }
+
 class Villages(db.Model):
     village_code = Column(Integer, primary_key=True)
     village_name = Column(String(100), nullable=False)
@@ -59,11 +99,26 @@ class Villages(db.Model):
     def __repr__(self):
             return "village_code: {}, village_name: {}".format(self.village_code, self.village_name)
 
+    @property
+    def serialize(self):
+        
+        return {
+            'village_code': self.village_code,
+            'village_name': self.village_name,
+        }
+
 class Years(db.Model):
     year_number = Column(Integer, primary_key=True)
 
     def __repr__(self):
         return "year_number: {}".format(self.year_number)
+
+    @property
+    def serialize(self):
+        
+        return {
+            'year_number': self.year_number,
+        }
 
 class Wines(db.Model):
     wine_id = Column(Integer, primary_key=True)
@@ -124,6 +179,103 @@ class Image(db.Model):
 def home():
     return render_template('documentation.html', title='Documentation')
 
+@app.route('/api/varieties', methods=['GET'])
+def get_varieties():
+    varieties = Varieties.query.all()
+    if not varieties:
+        return jsonify({"message": "No variety in database"})
+    return jsonify([variety.serialize for variety in varieties])
+
+@app.route('/api/variety/<variety_id>', methods=['GET'])
+def get_variety(variety_id):
+    if not variety_id:
+        return jsonify({"message": "Variety ID missing"}), 404
+    variety = Varieties.query.get(variety_id)
+    if not variety:
+        return jsonify({"message": "Variety doesn\'t exist"}), 404
+    return jsonify(variety.serialize)
+
+
+@app.route('/api/years', methods=['GET'])
+def get_years():
+    years = Years.query.all()
+    if not years:
+        return jsonify({"message": "No year in database"}), 404
+    return jsonify([year.serialize for year in years])
+
+@app.route('/api/year/<year_number>', methods=['GET'])
+def get_year(year_number):
+    if not year_number:
+        return jsonify({"message": "Year Number missing"}), 404
+    year = Years.query.get(year_number)
+    if not year:
+        return jsonify({"message": "Year doesn\'t exist"}), 404
+    return jsonify(year.serialize)
+
+@app.route('/api/villages', methods=['GET'])
+def get_villages():
+    villages = Villages.query.all()
+    if not villages:
+        return jsonify({"message": "No village in database"}), 404
+    return jsonify([village.serialize for village in villages])
+
+@app.route('/api/village/<village_id>', methods=['GET'])
+def get_village(village_id):
+    if not village_id:
+        return jsonify({"message": "Village ID missing"})
+    village = Villages.query.get(village_id)
+    if not village:
+        return jsonify({"message": "No village in database"})
+    return jsonify(village.serialize)
+
+@app.route('/api/regions', methods=['GET'])
+def get_regions():
+    regions = Regions.query.all()
+    if not regions:
+        return jsonify({"message": "No region in database"}), 404
+    return jsonify([region.serialize for region in regions])
+
+@app.route('/api/region/<region_id>', methods=['GET'])
+def get_region(region_id):
+    if not region_id:
+        return jsonify({"message": "Region ID missing"}), 404
+    region = Regions.query.get(region_id)
+    if not region:
+        return jsonify({"message": "Region doesn\'t exist"}), 404   
+    return jsonify(region.serialize)
+
+@app.route('/api/countries', methods=['GET'])
+def get_countries():
+        countries = Countries.query.all()
+        if not countries:
+            return jsonify({"message": "No country in database"}), 404
+        return jsonify([country.serialize for country in countries])
+
+@app.route('/api/country/<country_id>', methods=['GET'])
+def get_country(country_id):
+    if not country_id:
+         return jsonify({'message': 'Country ID missing'}), 404
+    country = Countries.query.get(country_id)
+    if not country:
+        return jsonify({"message": "Country doesn\'t exist"}), 404
+    return jsonify(country.serialize)
+
+@app.route('/api/colors', methods=['GET'])
+def get_colors():
+    colors = Colors.query.all()
+    if not colors:
+        return jsonify({"message": 'No color in database'}), 404
+    return jsonify([color.serialize for color in colors])
+
+@app.route('/api/color/<color_id>', methods=['GET'])
+def get_color(color_id):
+    if not color_id:
+        return jsonify({'message': 'Color ID missing'}), 404
+    color = Colors.query.get(color_id)
+    if not color:
+        return jsonify({'message': 'Color doesn\'t exist'}), 404
+    return jsonify(color.serialize)
+
 @app.route('/api/wines', methods=['GET', 'POST'])
 def get_wines():
     if request.method == "GET":
@@ -181,8 +333,6 @@ def get_wines():
 
         if not year_number:
             return jsonify({"message": "Missing year_number"}), 400
-
-        # userdetail = UserDetails(address=address, city=city, state=state, postcode=postcode, country=country, phone=phone, user_id=user.user_id)
 
         wine = Wines(wine_name=wine_name, wine_description=wine_description, origin=origin, price=price, color_code=color_code, country_code=country_code, region_code=region_code, variety_code=variety_code, vineyard_code=vineyard_code, village_code=village_code, year_number=year_number)
         db.session.add(wine)
