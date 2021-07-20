@@ -2,7 +2,7 @@ import os
 import json
 from flask import Flask, jsonify, abort, make_response, request, render_template
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, literal
 from flask_cors import CORS
 
 # --- INFO: APP CONFIGURATION ---
@@ -199,6 +199,10 @@ def get_vineyards():
         if not vineyard_name:
                 return jsonify({"message": "Missing vineyard_name"}), 400
 
+        exists = Vineyards.query.filter(Vineyards.vineyard_name.contains(vineyard_name)).all()
+        if exists:
+            return jsonify({"message": "vineyard_name already exists"})
+        
         vineyard = Vineyards(vineyard_name=vineyard_name)
         db.session.add(vineyard)
         db.session.commit()
@@ -231,6 +235,10 @@ def get_varieties():
 
         if not variety_name:
                 return jsonify({"message": "Missing variety_name"}), 400
+
+        exists = Varieties.query.filter(Varieties.variety_name.contains(variety_name)).all()
+        if exists:
+            return jsonify({"message": "variety_name already exists"})
 
         variety = Varieties(variety_name=variety_name)
         db.session.add(variety)
@@ -266,6 +274,9 @@ def get_years():
             if not year_number:
                     return jsonify({"message": "Missing year_number"}), 400
 
+            exists = Years.query.filter(Years.year_number.contains(year_number)).all()
+            if exists:
+                return jsonify({"message": "year_number already exists"})
 
             year = Years(year_number=year_number)
             db.session.add(year)
@@ -301,6 +312,10 @@ def get_villages():
         if not village_name:
                 return jsonify({"message": "Missing village_name"}), 400
 
+        exists = Villages.query.filter(Villages.village_name.contains(village_name)).all()
+        if exists:
+            return jsonify({"message": "village_name already exists"})
+
         village = Villages(village_name=village_name)
         db.session.add(village)
         db.session.commit()
@@ -334,6 +349,10 @@ def get_regions():
 
     if not region_name:
             return jsonify({"message": "Missing region_name"}), 400
+
+    exists = Regions.query.filter(Regions.region_name.contains(region_name)).all()
+    if exists:
+        return jsonify({"message": "region_name already exists"})
 
     region = Regions(region_name=region_name)
     db.session.add(region)
@@ -369,6 +388,10 @@ def get_countries():
     if not country_name:
             return jsonify({"message": "Missing country_name"}), 400
 
+    exists = Countries.query.filter(Countries.country_name.contains(country_name)).all()
+    if exists:
+        return jsonify({"message": "country_name already exists"})
+
     country = Countries(country_name=country_name)
     db.session.add(country)
     db.session.commit()
@@ -402,6 +425,10 @@ def get_colors():
 
     if not color_name:
             return jsonify({"message": "Missing color_name"}), 400
+
+    exists = Colors.query.filter(Colors.color_name.contains(color_name)).all()
+    if exists:
+        return jsonify({"message": "color_name already exists"})
 
     color = Colors(color_name=color_name)
     db.session.add(color)
