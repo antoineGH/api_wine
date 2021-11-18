@@ -41,7 +41,7 @@ After running the server, consult Documentation at :
 
 Database schema:
 
-![DB Screenshot](https://templars.guru/app/github/wine_api/1.png)
+![DB Screenshot](https://github.com/antoineratat/github_docs/blob/main/wine_api/1.png?raw=true)
 
 ## Technologies<a name="technologies"></a>
 
